@@ -24,9 +24,7 @@ const MenuBar = () => {
                         <li><a href="/services" className="text-gray-700 hover:text-[#EC5598]">Services</a></li>
                         <li><a href="/about" className="text-gray-700 hover:text-[#EC5598]">About Us</a></li>
                         <li><a href="/contact" className="text-gray-700 hover:text-[#EC5598]">Contact</a></li>
-                        <li><a href="/contact" className="text-gray-700 hover:text-[#EC5598] flex items-center"><FaCartPlus />
-                            <div className="w-28 h-16 bg-pink-600 rounded-full">+99</div>
-                        </a></li>
+                     
                     </ul>
                 </nav>
 

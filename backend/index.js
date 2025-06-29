@@ -7,6 +7,7 @@ const UserRoute = require('./routes/UserRoute') // Assuming this file contains u
 const ServiceRoute=require('./routes/ServiceRoute')
 const StaffRoute=require('./routes/StaffRoute')
 const AppointmentRoute=require('./routes/AppointmentRoute')
+const BookingRoute=require('./routes/BookingRoute')
 const port = process.env.PORT ||8080;
 
 app.use(cors())
@@ -16,6 +17,7 @@ app.use('/api',UserRoute)
 app.use('/api',ServiceRoute)
 app.use('/api',StaffRoute)
 app.use('/api',AppointmentRoute)
+app.use('/api',BookingRoute)
 
 
 app.get('/', (req, res) => {

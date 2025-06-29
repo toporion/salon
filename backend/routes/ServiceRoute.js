@@ -6,7 +6,7 @@ const verifyToken = require('../middlewares/verifyToken');
 const router=require('express').Router()
 
 router.post('/addService',verifyToken,upload.single('image'),addService)
-router.get('/allServices',verifyToken,getAllServices)
+router.get('/allServices',getAllServices)
 router.delete('/deleteService/:id',verifyToken,deleteService)
 router.get('/singleService/:id',verifyToken,serviceById)
 router.patch('/updateService/:id',verifyToken,upload.single('image'),updateServices)

@@ -112,11 +112,12 @@ const AddServiceForm = () => {
         <div>
           <label className="block font-semibold">Service Image</label>
           <input
-            type="file"   
+            type="file"  
+            {...register('image')}  
             className="w-full p-2 border rounded focus:outline-none focus:ring"
           />
         </div>
-        <input type="hidden" {...register('image')} />
+      
 
         {/* Submit Button */}
         <div className="text-center">
