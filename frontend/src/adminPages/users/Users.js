@@ -82,6 +82,7 @@ const Users = () => {
                   >
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
+                    <option value="staff">Staff</option>
                   </select>
                 </td>
                 <td className="border px-4 py-2">

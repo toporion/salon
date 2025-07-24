@@ -12,6 +12,7 @@ const AllStaff = () => {
     const fetchStaff = async () => {
       try {
         const res = await axiosSecure.get('/get-staff');
+        console.log(res.data.data)
         setStaffList(res.data.data || []);
       } catch (err) {
         console.error('Error fetching staff:', err);
@@ -20,7 +21,7 @@ const AllStaff = () => {
       }
     };
     fetchStaff();
-  }, [axiosSecure]);
+  }, []);
 
   return (
     <div className="p-6">

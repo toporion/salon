@@ -1,49 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import AxiosSecure from "../../hook/AxiosSecure";
 import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 
 
 const Appointment = () => {
+    const { id } = useParams()
+    const [serviceData, setServiceData] = useState(null);
+
+
     const { register, handleSubmit, reset, watch, setValue } = useForm();
-    const selectedServiceId = watch("service");
+
 
     const axiosSecure = AxiosSecure()
 
-    const fetchServices = async () => {
-        const res = await axiosSecure.get("/allServices");
-        console.log(res.data.data)
-        return res.data.data.allServices;
+    const fetchSingleService = async () => {
+        const res = await axiosSecure.get(`/singleService/${id}`);
+        console.log('see all service by id', res.data.data)
+        return res.data.data;
     };
 
     const fetchStaffs = async () => {
-        const res = await axios.get("http://localhost:8080/api/get-staff");
+        const res = await axiosSecure.get("/get-staff");
         console.log('see now staff', res.data.data)
         return res.data.data;
     };
-    // Fetch services
-    const {
-        data: services = [],
-        isLoading: loadingServices,
-        error: serviceError,
-    } = useQuery({
-        queryKey: ["services"],
-        queryFn: fetchServices,
-    });
+
 
     useEffect(() => {
-        if (selectedServiceId && services.length > 0) {
-            const selectedService = services.find(
-                (service) => service._id === selectedServiceId
-            );
-            if (selectedService) {
-                setValue("price", selectedService.price);
-            }
-        }
-    }, [selectedServiceId, services, setValue]);
+        const getService = async () => {
+            const data = await fetchSingleService();
+            setServiceData(data);
+
+            setValue("service", data._id); // Use ID for backend
+            setValue("price", data.price);
+        };
+
+        getService();
+    }, [id, setValue]);
+
 
     // Fetch staff
     const {
@@ -57,10 +56,22 @@ const Appointment = () => {
 
     const onSubmit = async (data) => {
         try {
+            if (!serviceData) return alert("Service data not loaded");
+
             const token = localStorage.getItem("token");
-            await axios.post("http://localhost:8080/api/appointment", data, {
+
+            // Inject the service ID before sending
+            const bookingData = {
+                ...data,
+                service: serviceData._id, // 👈 Here we assign the correct ObjectId
+            };
+            // ✅ Remove status if somehow it's included
+            delete bookingData.status;
+            console.log("Booking data to send:", bookingData);
+            await axios.post("http://localhost:8080/api/appointment", bookingData, {
                 headers: { Authorization: `Bearer ${token}` },
             });
+
             alert("✅ Appointment created successfully!");
             reset();
         } catch (err) {
@@ -68,6 +79,7 @@ const Appointment = () => {
             alert("❌ Booking failed.");
         }
     };
+    if (loadingStaffs) return <div>Loading staffs...</div>;
 
     return (
         <div className="max-w-2xl mx-auto mt-10 bg-white shadow-md p-8 rounded-xl">
@@ -75,13 +87,7 @@ const Appointment = () => {
                 📅 Create Appointment
             </h2>
 
-            {(loadingServices || loadingStaffs) && (
-                <p className="text-center text-gray-500">Loading options...</p>
-            )}
 
-            {(serviceError || staffError) && (
-                <p className="text-red-500 text-center">Failed to load data.</p>
-            )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 {/* Customer Name */}
@@ -95,21 +101,18 @@ const Appointment = () => {
                     />
                 </div>
 
-                {/* Service */}
+
+                {/* service */}
                 <div>
-                    <label className="block mb-1 font-medium">Select Service</label>
-                    <select
-                        {...register("service", { required: true })}
-                        className="w-full px-4 py-2 border rounded-md"
-                    >
-                        <option value="">-- Choose a service --</option>
-                        {services.map((service) => (
-                            <option key={service._id} value={service._id}>
-                                {service.name}
-                            </option>
-                        ))}
-                    </select>
+                    <label className="block mb-1 font-medium">Service</label>
+                    <input
+                        type="text"
+                        value={serviceData?.name || ''}
+                        readOnly
+                        className="w-full px-4 py-2 border rounded-md bg-gray-100"
+                    />
                 </div>
+
 
                 {/* Staff */}
                 <div>
@@ -155,6 +158,7 @@ const Appointment = () => {
                         {...register("price", { required: true })}
                         placeholder="৳"
                         className="w-full px-4 py-2 border rounded-md"
+                        readOnly
                     />
                 </div>
 

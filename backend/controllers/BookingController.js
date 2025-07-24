@@ -1,62 +1,91 @@
 const BookingModel = require("../models/BookingModel");
 
 const createBooking = async (req, res) => {
-    try{
-        const {service,date,timeSlot} = req.body;
-        const userId = req.user._id; // Assuming user ID is stored in req.user
+    try {
+        const { customerName, service, staff, date, time, price } = req.body;
+        console.log("Decoded user from token:", req.user);
+        const userId = req.user._id;
 
-        // basic validation
-        if (!service || !date || !timeSlot || !totalPrice) {
+        if (!customerName || !service || !date || !price) {
             return res.status(400).json({ error: "All fields are required" });
         }
-        // convert and validate date
-        const selectedDate = new Date(date);
-        if(isNaN(selectedDate)){
-            return res.status(400).json({ error: "Invalid date format" });
-        }
 
-        // check booking conflicts
         const existingBooking = await BookingModel.findOne({
-            user: userId,
-            service,
-            date: selectedDate,
-            timeSlot,
-            status: { $ne: 'cancelled' } // Exclude cancelled bookings
+            createdBy: userId, staff, date, time
         });
         if (existingBooking) {
-            return res.status(400).json({ error: "You already have a booking for this service at this time" });
+            return res.status(400).json({ error: "You already have a booking at this time" });
         }
-        // fetch service price
-        const serviceDetails = await BookingModel.findById(service);
-        if (!serviceDetails) {
-            return res.status(404).json({ error: "Service not found" });
-        }
-        const totalPrice = serviceDetails.price; // Use service price as total price
-
-        // validate total price
-        if (totalPrice !== serviceDetails.price) {
-            return res.status(400).json({ error: "Total price does not match service price" });
-        }
-        
-
-        // create new booking
         const newBooking = new BookingModel({
-            user: userId,
+            createdBy: userId,
+            customerName,
             service,
-            date: selectedDate,
-            timeSlot,
-            totalPrice,
-            status: 'pending' // Default status
+            staff,
+            date,
+            time,
+            status: "pending",
+            price:service.price // Assuming service has a price field
+        });
+        // Override again as double protection
+        newBooking.status = 'pending';
+        await newBooking.save();
+        console.log("Booking created successfully:", newBooking);
+        res.status(201).json({
+            success: true,
+            data: newBooking
         });
 
-    }catch (error) {
+    } catch (error) {
         console.error("Error creating booking:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 }
-module.exports = {
-    createBooking
+const getBooking = async (req, res) => {
+    try {
+        console.log("Decoded user from token:", req.user);
+
+        const userId = req.user._id;
+        const bookings = await BookingModel.find({ createdBy: userId }).populate('service');
+
+        console.log("User bookings:", bookings);
+        if (!bookings || bookings.length === 0) {
+            return res.status(404).json({ error: "No bookings found for this user" });
+        }   
+        const totalPrice = bookings.reduce((item,total)=>{
+            return item + total.price || 0; // Ensure total is a number
+        },0)
+        res.status(200).json({
+            success: true,
+            data: {bookings,totalPrice},
+            totalPrice: totalPrice
+        });
+        console.log("Bookings fetched successfully:", bookings, totalPrice);
+    } catch (error) {
+        console.error("Error fetching bookings:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+// GET /get-booking-by-id/:id
+const getBookingById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const booking = await BookingModel.findById(id).populate('service');
+
+    if (!booking) {
+      return res.status(404).json({ error: "Booking not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      data:booking // ← 🛑 This is the issue
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
 
 
-    
-}
+
+module.exports = { createBooking, getBooking,getBookingById };

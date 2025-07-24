@@ -67,7 +67,7 @@ const addStaff = async (req, res) => {
 const getStaffData = async (req, res) => {
   try {
 
-    const staffData = await StaffModel.find({})
+    const staffData = await StaffModel.find({}).populate('services', 'name').populate('createdBy', 'name');
     res.status(200).json({ success: true, message: "successfully get all staffs", data: staffData })
   } catch (error) {
     console.log(error)
