@@ -16,6 +16,9 @@ import Appointment from "../adminPages/Appointment/Appointment";
 import GetBooking from "../adminPages/booking/GetBooking";
 import PaymentSuccess from "../adminPages/PaymentSuccess";
 import UserPayments from "../adminPages/UserPayments";
+import Services from "../pages/services/Services";
+import About from "../pages/about/About";
+import Contact from "../pages/contact/Contact";
 
 
 const router = createBrowserRouter([
@@ -25,6 +28,9 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <Home /> },
       { path: "/login", element: <Login /> },
+      { path: "/show-services", element: <Services/> },
+      { path: "/about", element: <About/> },
+      { path: "/contact", element: <Contact/> },
     ]
   },
   {

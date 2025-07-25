@@ -1,4 +1,5 @@
 
+const mongoose = require('mongoose'); // Make sure you have this at the top
 const BookingModel = require('../models/BookingModel');
 const PaymentModel = require('../models/PaymentModel'); // (you'll create this)
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -34,15 +35,18 @@ const createCheckoutSession = async (req, res) => {
         res.status(500).json({ error: "Server error" });
     }
 };
-
+// In your PaymentController.js
 const confirmPayment = async (req, res) => {
     try {
         const { bookingId } = req.body;
         const userId = req.user._id;
 
-        // 🛑 Check if payment already exists
+        console.log("User ID from token for confirmation:", userId);
+        console.log("Booking ID received for confirmation:", bookingId);
+
         const existingPayment = await PaymentModel.findOne({ bookingId });
         if (existingPayment) {
+            console.warn(`⚠️ Duplicate payment attempt for booking: ${bookingId}. Payment already exists.`);
             return res.status(200).json({
                 success: true,
                 message: "Payment already confirmed",
@@ -50,16 +54,18 @@ const confirmPayment = async (req, res) => {
             });
         }
 
-        // ✅ Update booking status
+        // ONLY THIS BLOCK RUNS ON THE *FIRST* SUCCESSFUL ATTEMPT
         const booking = await BookingModel.findByIdAndUpdate(
             bookingId,
             { status: "paid" },
             { new: true }
         );
 
-        if (!booking) return res.status(404).json({ error: "Booking not found" });
+        if (!booking) {
+            console.error(`❌ Error: Booking not found for bookingId: ${bookingId}. Cannot create payment.`);
+            return res.status(404).json({ error: "Booking not found" });
+        }
 
-        // 💾 Save new payment
         const payment = new PaymentModel({
             bookingId,
             userId,
@@ -67,10 +73,13 @@ const confirmPayment = async (req, res) => {
         });
 
         await payment.save();
+        // THIS IS THE SUCCESS LOG YOU'RE LOOKING FOR!
+        console.log(`✅ NEW PAYMENT SUCCESSFULLY SAVED to DB for bookingId: ${bookingId}, Payment ID: ${payment._id}`);
+        console.log(`   Amount: ${payment.amount}, User ID: ${payment.userId}, Date: ${payment.paymentDate}`);
 
         res.status(200).json({ success: true, message: "Payment confirmed", payment });
     } catch (err) {
-        console.error("Confirm payment error", err);
+        console.error("❌ Critical Error: Confirm payment failed at some stage!", err);
         res.status(500).json({ error: "Server error" });
     }
 };
@@ -98,26 +107,26 @@ const getPaymentHistory = async (req, res) => {
 };
 
 const getAdminPaymentSummary = async (req, res) => {
-  try {
-    const summary = await PaymentModel.aggregate([
-      {
-        $group: {
-          _id: { year: { $year: "$paymentDate" }, month: { $month: "$paymentDate" } },
-          totalAmount: { $sum: "$amount" },
-          paymentCount: { $sum: 1 }
-        }
-      },
-      {
-        $sort: { "_id.year": -1, "_id.month": -1 }
-      }
-    ]);
+    try {
+        const summary = await PaymentModel.aggregate([
+            {
+                $group: {
+                    _id: { year: { $year: "$paymentDate" }, month: { $month: "$paymentDate" } },
+                    totalAmount: { $sum: "$amount" },
+                    paymentCount: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { "_id.year": -1, "_id.month": -1 }
+            }
+        ]);
 
-    res.status(200).json({ success: true, data: summary });
-  } catch (err) {
-    console.error("Admin summary error:", err);
-    res.status(500).json({ error: "Could not get admin summary" });
-  }
+        res.status(200).json({ success: true, data: summary });
+    } catch (err) {
+        console.error("Admin summary error:", err);
+        res.status(500).json({ error: "Could not get admin summary" });
+    }
 };
 
 
-module.exports = { createCheckoutSession,confirmPayment,getPaymentHistory,getAdminPaymentSummary};
+module.exports = { createCheckoutSession, confirmPayment, getPaymentHistory, getAdminPaymentSummary };
