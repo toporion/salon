@@ -68,7 +68,7 @@ const Appointment = () => {
             // ✅ Remove status if somehow it's included
             delete bookingData.status;
             console.log("Booking data to send:", bookingData);
-            await axios.post("http://localhost:8080/api/appointment", bookingData, {
+            await axios.post("https://salon-8j7i.vercel.app/api/appointment", bookingData, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 

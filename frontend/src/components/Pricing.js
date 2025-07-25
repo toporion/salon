@@ -26,7 +26,7 @@ const Pricing = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const res = await axios.get('http://localhost:8080/api/allServices');
+        const res = await axios.get('https://salon-8j7i.vercel.app/api/allServices');
         const all = res.data?.data?.allServices || [];
         setServices(all);
         if (all.length > 0) {

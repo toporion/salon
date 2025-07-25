@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const AxiosPublic = () => {
     const axiosPublic=axios.create({
-        baseURL: 'http://localhost:8080/api', // Replace with your API base URL
+        baseURL: 'https://salon-8j7i.vercel.app/api', // Replace with your API base URL
        
     })
     return axiosPublic;

@@ -18,7 +18,7 @@ export default function Login() {
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (emailValue && isValidEmail(emailValue)) {
-        fetch(`http://localhost:8080/api/user-by-email?email=${emailValue}`)
+        fetch(`https://salon-8j7i.vercel.app/api/user-by-email?email=${emailValue}`)
           .then((res) => res.json())
           .then((data) => {
             if (data.success && data.user?.image) {
