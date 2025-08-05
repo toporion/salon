@@ -24,9 +24,9 @@ const createCheckoutSession = async (req, res) => {
                 quantity: 1,
             }],
             mode: 'payment',
-            success_url: `https://salon-8j7i.vercel.app/admin/payment-success?bookingId=${booking._id}`,
+            success_url: `https://salon-ecru.vercel.app/admin/payment-success?bookingId=${booking._id}`,
 
-            cancel_url: `https://salon-8j7i.vercel.app/admin/get-booking`,
+            cancel_url: `https://salon-ecru.vercel.app/admin/get-booking`,
         });
 
         res.json({ url: session.url });
