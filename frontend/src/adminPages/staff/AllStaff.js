@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import AxiosSecure from '../../hook/AxiosSecure'; // your secure axios hook
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import AxiosSecure from '../../hook/AxiosSecure';
+import { FaEdit, FaTrash, FaRegEye } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 const AllStaff = () => {
   const axiosSecure = AxiosSecure();
   const [staffList, setStaffList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedStaff, setSelectedStaff] = useState(null);
+  const [bookings, setBookings] = useState([]);
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchStaff = async () => {
       try {
         const res = await axiosSecure.get('/get-staff');
-        console.log(res.data.data)
         setStaffList(res.data.data || []);
       } catch (err) {
         console.error('Error fetching staff:', err);
@@ -22,6 +25,25 @@ const AllStaff = () => {
     };
     fetchStaff();
   }, []);
+
+  const handleShowWork = async (staff) => {
+    try {
+      setSelectedStaff(staff);
+      const res = await axiosSecure.get(`/get-bookings-by-staff/${staff._id}?status=paid`);
+      setBookings(res.data.data || []);
+      setTotalIncome(res.data.totalIncome || 0);
+      setShowModal(true);
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
+    }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedStaff(null);
+    setBookings([]);
+    setTotalIncome(0);
+  };
 
   return (
     <div className="p-6">
@@ -68,14 +90,21 @@ const AllStaff = () => {
                   <td className="px-4 py-2 border">
                     {(staff.services || []).map((svc) => svc.name).join(', ') || '-'}
                   </td>
-                  <td className="px-4 py-2 border space-x-2">
-                   <Link to={`/admin/updateStaff/${staff._id}`}>
-                    <button className="text-blue-600 hover:text-blue-800" title="Edit">
-                      <FaEdit />
-                    </button>
-                   </Link>
+                  <td className="px-4 py-2 border space-x-2 flex">
+                    <Link to={`/admin/updateStaff/${staff._id}`}>
+                      <button className="text-blue-600 hover:text-blue-800" title="Edit">
+                        <FaEdit />
+                      </button>
+                    </Link>
                     <button className="text-red-600 hover:text-red-800" title="Delete">
                       <FaTrash />
+                    </button>
+                    <button
+                      className="text-green-600 hover:text-green-800"
+                      title="Show Work"
+                      onClick={() => handleShowWork(staff)}
+                    >
+                      <FaRegEye />
                     </button>
                   </td>
                 </tr>
@@ -89,6 +118,62 @@ const AllStaff = () => {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+            <h3 className="text-xl font-bold mb-4 text-gray-800">
+              Work Report of {selectedStaff?.name}
+            </h3>
+
+            <table className="min-w-full text-sm border border-gray-300 mb-4">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="px-4 py-2 border">Customer</th>
+                  <th className="px-4 py-2 border">Service</th>
+                  <th className="px-4 py-2 border">Date</th>
+                  <th className="px-4 py-2 border">Time</th>
+                  <th className="px-4 py-2 border">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {bookings.map((booking) => (
+                  <tr key={booking._id} className="border-t hover:bg-gray-50">
+                    <td className="px-4 py-2 border">{booking.customerName}</td>
+                    <td className="px-4 py-2 border">{booking.service?.name || 'N/A'}</td>
+                    <td className="px-4 py-2 border">
+                      {new Date(booking.date).toLocaleDateString()}
+                    </td>
+                    <td className="px-4 py-2 border">{booking.time}</td>
+                    <td className="px-4 py-2 border">{booking.price} ৳</td>
+                  </tr>
+                ))}
+                {bookings.length === 0 && (
+                  <tr>
+                    <td colSpan="5" className="text-center py-4 text-gray-500">
+                      No paid work found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+
+            <div className="text-right font-semibold text-gray-800 mb-4">
+              Total Earned: <span className="text-green-600">{totalIncome} ৳</span>
+            </div>
+
+            <div className="text-right">
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded"
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

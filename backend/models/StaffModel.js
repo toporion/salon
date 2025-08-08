@@ -20,7 +20,7 @@ const staffSchema = new Schema({
         required: true,
         trim: true
     },
-    image:{type:String},
+    profilePicture:{type:String},
     services: [{
         type: Schema.Types.ObjectId,
         ref: 'services' // Adjust if your service model is named differently

@@ -24,7 +24,7 @@ const createBooking = async (req, res) => {
             date,
             time,
             status: "pending",
-            price:service.price // Assuming service has a price field
+            price: service.price // Assuming service has a price field
         });
         // Override again as double protection
         newBooking.status = 'pending';
@@ -50,13 +50,14 @@ const getBooking = async (req, res) => {
         console.log("User bookings:", bookings);
         if (!bookings || bookings.length === 0) {
             return res.status(404).json({ error: "No bookings found for this user" });
-        }   
-        const totalPrice = bookings.reduce((item,total)=>{
-            return item + total.price || 0; // Ensure total is a number
-        },0)
+        }
+        const totalPrice = bookings.reduce((sum, booking) => {
+            return sum + (booking.price || 0);
+        }, 0);
+
         res.status(200).json({
             success: true,
-            data: {bookings,totalPrice},
+            data: { bookings, totalPrice },
             totalPrice: totalPrice
         });
         console.log("Bookings fetched successfully:", bookings, totalPrice);
@@ -68,24 +69,52 @@ const getBooking = async (req, res) => {
 
 // GET /get-booking-by-id/:id
 const getBookingById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const booking = await BookingModel.findById(id).populate('service');
+    try {
+        const { id } = req.params;
+        const booking = await BookingModel.findById(id).populate('service');
 
-    if (!booking) {
-      return res.status(404).json({ error: "Booking not found" });
+        if (!booking) {
+            return res.status(404).json({ error: "Booking not found" });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: booking // ← 🛑 This is the issue
+        });
+
+    } catch (error) {
+        res.status(500).json({ error: "Server error" });
     }
+};
 
-    res.status(200).json({
-      success: true,
-      data:booking // ← 🛑 This is the issue
-    });
+const getBookingsByStaff = async (req, res) => {
+    try {
+        const { staffId } = req.params;
+        const { status } = req.query; // optional status query (e.g., paid)
 
-  } catch (error) {
-    res.status(500).json({ error: "Server error" });
-  }
+        const query = { staff: staffId };
+        if (status) {
+            query.status = status;
+        }
+
+        const bookings = await BookingModel.find(query)
+            .populate('service')  // populate service to get service name
+            .sort({ date: -1 });
+
+        const totalIncome = bookings.reduce((sum, booking) => sum + (booking.price || 0), 0);
+
+        res.status(200).json({
+            success: true,
+            data: bookings,
+            totalIncome
+        });
+    } catch (error) {
+        console.error("Error fetching bookings by staff:", error);
+        res.status(500).json({ error: "Server error" });
+    }
 };
 
 
 
-module.exports = { createBooking, getBooking,getBookingById };
+
+module.exports = { createBooking, getBooking, getBookingById,getBookingsByStaff };

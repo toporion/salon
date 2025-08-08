@@ -14,7 +14,7 @@ const GetBooking = () => {
 
 
     useEffect(() => {
-        const fetchBookings = async () => {
+        const fetchBookings = async (userId) => {
             try {
                 const response = await axiosSecure.get('/get-booking');
                 console.log('Fetched bookings:', response.data.data.bookings);

@@ -3,7 +3,8 @@ import React from 'react';
 
 const AxiosSecure = () => {
     const axiosSecure = axios.create({
-        baseURL: 'https://salon-8j7i.vercel.app/api', // Replace with your API base URL
+        
+        baseURL: 'https://salon-8j7i.vercel.app/api', 
 
     })
     // Add a request interceptor

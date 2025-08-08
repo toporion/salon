@@ -1,12 +1,13 @@
 const { default: mongoose } = require("mongoose");
 const StaffModel = require("../models/StaffModel");
 const bcrypt = require("bcryptjs");
+const UserModel = require("../models/UserModel");
 
 const addStaff = async (req, res) => {
   try {
     const createdBy = req.user._id;
     const { contact, password } = req.body;
-
+     const profilePicture = req.file ? req.file.path : null; // Assuming file upload middleware is used
     // Check base validation
     if (!req.body.name || !req.body.role || !contact) {
       return res.status(400).json({
@@ -36,8 +37,19 @@ const addStaff = async (req, res) => {
     if (typeof services === 'string') {
       services = [services];
     }
+
     // Hash the password correctly
     const hashPassword = await bcrypt.hash(String(password), 10);
+
+    // 2. Create a new user
+    const newUser = new UserModel({
+      name: staffData.name,
+      email: staffData.email,
+      password: hashPassword,
+      role: 'user',
+      profilePicture
+    })
+
 
     // Final staff data using spread
     const staffData = {
@@ -51,7 +63,7 @@ const addStaff = async (req, res) => {
     const newStaff = new StaffModel(staffData);
     await newStaff.save();
 
-    
+
     res.status(200).json({
       success: true,
       message: 'Staff successfully created',
@@ -156,6 +168,8 @@ const getSingleStaff = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal error' });
   }
 };
+
+
 
 
 
