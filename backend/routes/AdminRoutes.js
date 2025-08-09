@@ -6,6 +6,6 @@ const verifyRole = require('../middlewares/verifyRole');
 
 const router = express.Router();
 
-router.get('/income-summary',verifyToken,verifyRole('admin','user','staff'),getIncomeSummary);
+router.get('/income-summary',verifyToken,verifyRole('admin'),getIncomeSummary);
 
 module.exports = router;
