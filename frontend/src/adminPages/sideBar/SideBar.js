@@ -99,7 +99,7 @@ const SideBar = () => {
                     Manage Appointments
                   </a>
                 ) : user?.role === 'staff' ? (
-                  <a href="/admin/get-appointment" className="text-gray-300 hover:text-white py-1 px-2 hover:bg-gray-700 rounded">
+                  <a href="/admin/allBooking" className="text-gray-300 hover:text-white py-1 px-2 hover:bg-gray-700 rounded">
                     View Appointments
                   </a>
                 ) : null}
