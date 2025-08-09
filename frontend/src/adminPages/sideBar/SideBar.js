@@ -16,7 +16,7 @@ const SideBar = () => {
 
   const [isServicesOpen, setIsServicesOpen] = useState(false);
   const [isAppointmentsOpen, setIsAppointmentsOpen] = useState(false);
-  const [isClientsOpen, setIsClientsOpen] = useState(false);
+  // const [isClientsOpen, setIsClientsOpen] = useState(false);
   const [isStaffOpen, setIsStaffOpen] = useState(false);
   const [isUserOpen, setIsUserOpen] = useState(false);
 
@@ -131,7 +131,7 @@ const SideBar = () => {
           </a>
         )}
 
-        {/* Clients */}
+        {/* Clients
         {hasAccess('clients') && (
           <div className="px-8">
             <button
@@ -149,7 +149,7 @@ const SideBar = () => {
               </div>
             )}
           </div>
-        )}
+        )} */}
 
         {/* Staff */}
         {hasAccess('staff') && (

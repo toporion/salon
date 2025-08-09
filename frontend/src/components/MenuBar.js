@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import logo from '../assets/logo.png';
 import { FaBars, FaCartPlus, FaTimes } from 'react-icons/fa';
 import UseAuth from '../hook/UseAuth';
+import { Link } from 'react-router-dom';
 
 const MenuBar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -34,6 +35,11 @@ const MenuBar = () => {
                             <>
                             <li><a href="/login" className="text-gray-700 hover:text-[#EC5598]">Login</a></li>
                             </>
+                        }
+
+                        {
+                           isAuthenticated ? <><li><Link to={'/admin'}><button >Admin Panel</button></Link></li></>: ""
+                            
                         }
                      
                     </ul>

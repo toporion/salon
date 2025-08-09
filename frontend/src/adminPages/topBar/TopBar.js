@@ -1,31 +1,36 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const TopBar = ({ onMobileMenuClick }) => (
   <header className="w-full bg-gray-900 text-white flex items-center h-12 shadow-md fixed top-0 left-0 md:left-56 z-40">
-    
+
     {/* Hamburger Icon - Only on small screens */}
-    <button 
-      className="md:hidden px-4 text-2xl focus:outline-none" 
+    <button
+      className="md:hidden px-4 text-2xl focus:outline-none"
       onClick={onMobileMenuClick}
     >
       &#9776; {/* Unicode for ☰ */}
     </button>
 
     {/* WP Logo */}
-    <div className="flex items-center px-4">
-      <svg
-        className="w-7 h-7 mr-2"
-        viewBox="0 0 32 32"
-        fill="currentColor"
-        aria-hidden="true"
-      >
-        <circle cx="16" cy="16" r="16" fill="#23282d" />
-        <path
-          d="M16 4C9.373 4 4 9.373 4 16c0 6.627 5.373 12 12 12s12-5.373 12-12c0-6.627-5.373-12-12-12zm0 22c-5.523 0-10-4.477-10-10 0-5.523 4.477-10 10-10s10 4.477 10 10c0 5.523-4.477 10-10 10zm0-18a8 8 0 100 16 8 8 0 000-16z"
-          fill="#fff"
-        />
-      </svg>
-      <span className="font-semibold text-lg tracking-tight">My WordPress</span>
+    <div className='flex justify-between  w-full pr-16' >
+      <div className="flex justify-between items-center px-4">
+        <svg
+          className="w-7 h-7 mr-2"
+          viewBox="0 0 32 32"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <circle cx="16" cy="16" r="16" fill="#23282d" />
+          <path
+            d="M16 4C9.373 4 4 9.373 4 16c0 6.627 5.373 12 12 12s12-5.373 12-12c0-6.627-5.373-12-12-12zm0 22c-5.523 0-10-4.477-10-10 0-5.523 4.477-10 10-10s10 4.477 10 10c0 5.523-4.477 10-10 10zm0-18a8 8 0 100 16 8 8 0 000-16z"
+            fill="#fff"
+          />
+        </svg>
+        <span className="font-semibold text-lg tracking-tight">My Salon</span>
+      </div>
+
+      <Link to={'/'}><p className='font-bold'>Home</p></Link>
     </div>
 
     <div className="flex-1"></div>
