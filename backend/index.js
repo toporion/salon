@@ -9,6 +9,7 @@ const StaffRoute=require('./routes/StaffRoute')
 const AppointmentRoute=require('./routes/AppointmentRoute')
 const BookingRoute=require('./routes/BookingRoute')
 const paymentRoutes = require('./routes/paymentRoutes');
+const AdminRoutes = require('./routes/AdminRoutes');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 // const paymentRoute=require('./routes/PaymentRoute')
 const port = process.env.PORT ||8080;
@@ -24,6 +25,7 @@ app.use('/api',StaffRoute)
 app.use('/api',AppointmentRoute)
 app.use('/api',BookingRoute)
 app.use('/api', paymentRoutes);
+app.use('/api', AdminRoutes);
 // app.use('/api',paymentRoute)
 
 

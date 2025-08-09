@@ -88,14 +88,14 @@ const SideBar = () => {
               className="w-full flex items-center gap-3 py-3 text-gray-300 hover:bg-gray-900 hover:text-white transition-colors"
             >
               <FaCalendarAlt className="text-lg" />
-              <span className="flex-1 text-left">Appointments</span>
+              <span className="flex-1 text-left">Bookings</span>
               {isAppointmentsOpen ? <FaAngleUp /> : <FaAngleDown />}
             </button>
 
             {isAppointmentsOpen && (
               <div className="ml-6 mt-1 flex flex-col gap-1 text-sm">
                 {user?.role === 'admin' ? (
-                  <a href="/admin/appointment" className="text-gray-300 hover:text-white py-1 px-2 hover:bg-gray-700 rounded">
+                  <a href="/admin/allBooking" className="text-gray-300 hover:text-white py-1 px-2 hover:bg-gray-700 rounded">
                     Manage Appointments
                   </a>
                 ) : user?.role === 'staff' ? (

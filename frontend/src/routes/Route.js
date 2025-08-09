@@ -19,6 +19,7 @@ import UserPayments from "../adminPages/UserPayments";
 import Services from "../pages/services/Services";
 import About from "../pages/about/About";
 import Contact from "../pages/contact/Contact";
+import IncomeSummary from "../adminPages/IncomeSummary";
 
 
 const router = createBrowserRouter([
@@ -28,9 +29,9 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <Home /> },
       { path: "/login", element: <Login /> },
-      { path: "/show-services", element: <Services/> },
-      { path: "/about", element: <About/> },
-      { path: "/contact", element: <Contact/> },
+      { path: "/show-services", element: <Services /> },
+      { path: "/about", element: <About /> },
+      { path: "/contact", element: <Contact /> },
     ]
   },
   {
@@ -49,6 +50,7 @@ const router = createBrowserRouter([
       { path: "allBooking", element: <GetBooking /> },
       { path: "payment-success", element: <PaymentSuccess /> },
       { path: "user-payments", element: <UserPayments /> },
+      { path: "income-summary", element: <IncomeSummary/> },
 
 
 

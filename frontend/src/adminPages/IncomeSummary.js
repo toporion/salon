@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-
+import AxiosSecure from "../hook/AxiosSecure";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
-import AxiosSecure from "../../hook/AxiosSecure";
 
-const AdminHome = () => {
+const IncomeSummary = () => {
   const axiosSecure = AxiosSecure();
   const [summary, setSummary] = useState(null);
 
@@ -70,4 +69,4 @@ const AdminHome = () => {
   );
 };
 
-export default AdminHome;
+export default IncomeSummary;

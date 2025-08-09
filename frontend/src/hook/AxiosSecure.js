@@ -4,6 +4,7 @@ import React from 'react';
 const AxiosSecure = () => {
     const axiosSecure = axios.create({
         
+        // baseURL: 'http://localhost:8080/api', 
         baseURL: 'https://salon-8j7i.vercel.app/api', 
 
     })
