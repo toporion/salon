@@ -20,6 +20,7 @@ import Services from "../pages/services/Services";
 import About from "../pages/about/About";
 import Contact from "../pages/contact/Contact";
 import IncomeSummary from "../adminPages/IncomeSummary";
+import Register from "../pages/register/Register";
 
 
 const router = createBrowserRouter([
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <Home /> },
       { path: "/login", element: <Login /> },
+      { path: "/register", element: <Register/> },
       { path: "/show-services", element: <Services /> },
       { path: "/about", element: <About /> },
       { path: "/contact", element: <Contact /> },

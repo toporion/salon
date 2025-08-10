@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useForm } from "react-hook-form";
 
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from "../../authProvider/AuthProvider";
 
 export default function Login() {
@@ -91,6 +91,7 @@ export default function Login() {
                 {...register("password", { required: true })}
                 className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
               />
+              
             </div>
             <button
               type="submit"
@@ -98,6 +99,7 @@ export default function Login() {
             >
               Login
             </button>
+            <p>Dont have account ? <Link to={'/register'}><span className="font-bold text-pink-800">Signup</span></Link></p>
           </form>
         </div>
       </div>
