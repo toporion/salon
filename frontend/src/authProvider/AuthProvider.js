@@ -25,6 +25,8 @@ const AuthProvider = ({children}) => {
             return res.data;
         }catch(error){
             console.error("Error in loginUser:", error);
+        }finally{
+            setLoading(false)
         }
     }
    const logOutUser=()=>{
